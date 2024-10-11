@@ -2,10 +2,10 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    java
     application
     checkstyle
     jacoco
+    id("io.freefair.lombok") version "8.10.2"
     id("org.springframework.boot") version "3.3.3"
     id("io.spring.dependency-management") version "1.1.6"
 }
@@ -19,6 +19,10 @@ java {
     }
 }
 
+application {
+    mainClass = "hexlet.code.AppApplication"
+}
+
 repositories {
     mavenCentral()
 }
@@ -28,6 +32,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.mapstruct:mapstruct:1.5.5.Final")
+    implementation("org.projectlombok:lombok")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
     runtimeOnly("com.h2database:h2")
     implementation("org.springframework.boot:spring-boot-starter")
@@ -38,8 +43,8 @@ dependencies {
     implementation("net.datafaker:datafaker:2.0.2")
     implementation("org.instancio:instancio-junit:3.3.1")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+//    implementation("org.springframework.boot:spring-boot-starter-security")
+    runtimeOnly("org.postgresql:postgresql")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
