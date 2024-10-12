@@ -10,6 +10,6 @@ public class WelcomeController {
 
     @GetMapping("/welcome")
     public String greetings() {
-        return "WelcomeController";
+        return "Welcome to Spring";
     }
 }
