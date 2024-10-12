@@ -43,7 +43,8 @@ dependencies {
     implementation("net.datafaker:datafaker:2.0.2")
     implementation("org.instancio:instancio-junit:3.3.1")
     implementation("org.openapitools:jackson-databind-nullable:0.2.6")
-//    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     runtimeOnly("org.postgresql:postgresql")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
