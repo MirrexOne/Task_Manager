@@ -10,6 +10,7 @@ jte-classes
 .factorypath
 bin
 .classpath
+application-dev.properties
 
 ### IntelliJ IDEA ###
 .idea/
