@@ -39,7 +39,6 @@ public class UserControllerTest {
     private AuthService authService;
 
     private String token;
-    
     private Long userId;
 
     @BeforeEach
