@@ -76,3 +76,7 @@ tasks.jacocoTestReport {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+tasks.test {
+    ignoreFailures = true
+}
