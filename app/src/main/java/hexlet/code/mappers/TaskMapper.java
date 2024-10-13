@@ -11,6 +11,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, TaskStatusMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
@@ -36,6 +37,16 @@ public abstract class TaskMapper {
     @Mapping(target = "taskStatus", source = "taskStatusId")
     @Mapping(target = "assignee", source = "assigneeId")
     public abstract void update(TaskDto.Request dto, @MappingTarget Task task);
+
+    @Autowired
+    public void setTaskStatusRepository(TaskStatusRepository taskStatusRepository) {
+        this.taskStatusRepository = taskStatusRepository;
+    }
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     protected TaskStatus mapTaskStatus(Long taskStatusId) {
         if (taskStatusId == null) {
