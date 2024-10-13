@@ -15,12 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,24 +36,21 @@ public class UserControllerTest {
     @Autowired
     private AuthService authService;
 
+    private static final String BASE_URL = "/api/users";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_TOKEN = "Bearer %s";
+    private static final String DEFAULT_EMAIL = "test@example.com";
+    private static final String DEFAULT_PASSWORD = "password";
+
     private String token;
     private Long userId;
 
     @BeforeEach
     void setUp() {
         userRepository.deleteAll();
-        CreateUserRequest request = new CreateUserRequest();
-        request.setEmail("test@example.com");
-        request.setFirstName("John");
-        request.setLastName("Doe");
-        request.setPassword("password");
-        UserResponse userResponse = authService.createUser(request);
-        userId = userResponse.getId();
-
-        LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("test@example.com");
-        loginRequest.setPassword("password");
-        token = authService.login(loginRequest);
+        UserResponse user = createTestUser(DEFAULT_EMAIL, "John", "Doe", DEFAULT_PASSWORD);
+        userId = user.getId();
+        token = getAuthToken(DEFAULT_EMAIL, DEFAULT_PASSWORD);
     }
 
     @Test
@@ -64,9 +59,9 @@ public class UserControllerTest {
         request.setEmail("newuser@example.com");
         request.setFirstName("Jane");
         request.setLastName("Doe");
-        request.setPassword("password");
+        request.setPassword(DEFAULT_PASSWORD);
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -78,10 +73,10 @@ public class UserControllerTest {
 
     @Test
     void testGetUser() throws Exception {
-        mockMvc.perform(get("/api/users/" + userId)
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get(BASE_URL + "/" + userId)
+                        .header(AUTH_HEADER, String.format(BEARER_TOKEN, token)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("test@example.com"))
+                .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL))
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"));
     }
@@ -91,31 +86,30 @@ public class UserControllerTest {
         UpdateUserRequest updateRequest = new UpdateUserRequest();
         updateRequest.setFirstName("Jane");
 
-        mockMvc.perform(put("/api/users/" + userId)
-                        .header("Authorization", "Bearer " + token)
+        mockMvc.perform(put(BASE_URL + "/" + userId)
+                        .header(AUTH_HEADER, String.format(BEARER_TOKEN, token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Jane"))
                 .andExpect(jsonPath("$.lastName").value("Doe"))
-                .andExpect(jsonPath("$.email").value("test@example.com"));
+                .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL));
     }
 
-//    @Test
-//    void testDeleteUser() throws Exception {
-//        // Perform the delete operation
-//        mockMvc.perform(delete("/api/users/" + userId)
-//                        .header("Authorization", "Bearer " + token))
-//                .andExpect(status().isNoContent());
-//
-//        // Try to get the deleted user (this should return 404 Not Found)
-//        mockMvc.perform(get("/api/users/" + userId)
-//                        .header("Authorization", "Bearer " + token))
-//                .andExpect(status().isNotFound());
-//
-//        // Verify that the user no longer exists in the database
-//        assertFalse(userRepository.existsById(userId));
-//    }
+    @Test
+    void testDeleteUser() throws Exception {
+        UserResponse user = createTestUser("deletetest@example.com", "Delete", "Test", DEFAULT_PASSWORD);
+        String deleteToken = getAuthToken("deletetest@example.com", DEFAULT_PASSWORD);
+
+        mockMvc.perform(delete(BASE_URL + "/" + user.getId())
+                        .header(AUTH_HEADER, String.format(BEARER_TOKEN, deleteToken)))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get(BASE_URL + "/" + user.getId()))
+                .andExpect(status().isUnauthorized());
+
+        assertFalse(userRepository.existsById(user.getId()));
+    }
 
     @Test
     void testCreateUserWithInvalidData() throws Exception {
@@ -125,7 +119,7 @@ public class UserControllerTest {
         request.setLastName("D");
         request.setPassword("");
 
-        mockMvc.perform(post("/api/users")
+        mockMvc.perform(post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -133,15 +127,31 @@ public class UserControllerTest {
 
     @Test
     void testGetAllUsers() throws Exception {
-        mockMvc.perform(get("/api/users")
-                        .header("Authorization", "Bearer " + token))
+        mockMvc.perform(get(BASE_URL)
+                        .header(AUTH_HEADER, String.format(BEARER_TOKEN, token)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value("test@example.com"));
+                .andExpect(jsonPath("$[0].email").value(DEFAULT_EMAIL));
     }
 
     @Test
     void testUnauthorizedAccess() throws Exception {
-        mockMvc.perform(get("/api/users/" + userId))
+        mockMvc.perform(get(BASE_URL + "/" + userId))
                 .andExpect(status().isUnauthorized());
+    }
+
+    private UserResponse createTestUser(String email, String firstName, String lastName, String password) {
+        CreateUserRequest request = new CreateUserRequest();
+        request.setEmail(email);
+        request.setFirstName(firstName);
+        request.setLastName(lastName);
+        request.setPassword(password);
+        return authService.createUser(request);
+    }
+
+    private String getAuthToken(String username, String password) {
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setUsername(username);
+        loginRequest.setPassword(password);
+        return authService.login(loginRequest);
     }
 }
