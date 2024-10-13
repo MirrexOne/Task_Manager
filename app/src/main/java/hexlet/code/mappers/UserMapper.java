@@ -14,12 +14,15 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     User toUser(CreateUserRequest createUserRequest);
 
     UserResponse toUserResponse(User user);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "password", ignore = true)
     void updateUserFromDto(UpdateUserRequest updateUserRequest, @MappingTarget User user);
 }
