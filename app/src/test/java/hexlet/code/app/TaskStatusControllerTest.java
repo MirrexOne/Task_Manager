@@ -3,7 +3,9 @@ package hexlet.code.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.entities.TaskStatus;
+import hexlet.code.repositories.TaskRepository;
 import hexlet.code.repositories.TaskStatusRepository;
+import hexlet.code.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +36,15 @@ public class TaskStatusControllerTest {
     private ObjectMapper objectMapper;
 
     private TaskStatus testStatus;
+    @Autowired
+    private TaskRepository taskRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setUp() {
+        taskRepository.deleteAll();
+        userRepository.deleteAll();
         taskStatusRepository.deleteAll();
         testStatus = new TaskStatus();
         testStatus.setName("Test Status");

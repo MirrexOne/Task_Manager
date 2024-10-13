@@ -5,6 +5,7 @@ import hexlet.code.dto.requests.CreateUserRequest;
 import hexlet.code.dto.requests.LoginRequest;
 import hexlet.code.dto.requests.UpdateUserRequest;
 import hexlet.code.dto.responses.UserResponse;
+import hexlet.code.repositories.TaskRepository;
 import hexlet.code.repositories.UserRepository;
 import hexlet.code.services.AuthService;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,9 +48,12 @@ public class UserControllerTest {
 
     private String token;
     private Long userId;
+    @Autowired
+    private TaskRepository taskRepository;
 
     @BeforeEach
     void setUp() {
+        taskRepository.deleteAll();
         userRepository.deleteAll();
         UserResponse user = createTestUser(DEFAULT_EMAIL, "John", "Doe", DEFAULT_PASSWORD);
         userId = user.getId();

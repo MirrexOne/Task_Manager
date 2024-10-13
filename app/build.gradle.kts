@@ -77,6 +77,6 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-tasks.test {
-    ignoreFailures = true
-}
+//tasks.test {
+//    ignoreFailures = true
+//}
