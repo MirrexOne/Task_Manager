@@ -4,6 +4,7 @@ import hexlet.code.dto.requests.UpdateUserRequest;
 import hexlet.code.dto.responses.UserResponse;
 import hexlet.code.entities.User;
 import hexlet.code.exception.CustomException;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mappers.UserMapper;
 import hexlet.code.repositories.UserRepository;
 import hexlet.code.services.UserService;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toUserResponse(user);
     }
 

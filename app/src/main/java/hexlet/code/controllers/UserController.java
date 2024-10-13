@@ -2,6 +2,7 @@ package hexlet.code.controllers;
 
 import hexlet.code.dto.requests.UpdateUserRequest;
 import hexlet.code.dto.responses.UserResponse;
+import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.getUserById(id));
+        try {
+            UserResponse user = userService.getUserById(id);
+            return ResponseEntity.ok(user);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
