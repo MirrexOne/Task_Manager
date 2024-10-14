@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class TaskDto {
 
@@ -24,7 +25,7 @@ public class TaskDto {
         private Long taskStatusId;
         @Getter
         private Long assigneeId;
-
+        private Set<Long> labelIds;
     }
 
     @Data
@@ -38,5 +39,6 @@ public class TaskDto {
         private String taskStatus;
         private String assignee;
         private LocalDate createdAt;
+        private Set<LabelDto.Response> labels;
     }
 }

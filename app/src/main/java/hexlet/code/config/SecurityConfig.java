@@ -25,7 +25,6 @@ import org.springframework.http.HttpMethod;
 public class SecurityConfig {
 
     private final JwtRequestFilter jwtRequestFilter;
-
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
@@ -45,6 +44,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login", "/api/users").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/task_statuses", "/api/task_statuses/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/labels", "/api/labels/**").permitAll()
                         .requestMatchers("/index.html").permitAll()
                         .requestMatchers("/assets/**").permitAll()
                         .requestMatchers("/").permitAll()
