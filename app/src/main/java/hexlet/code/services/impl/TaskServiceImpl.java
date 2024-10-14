@@ -1,6 +1,7 @@
 package hexlet.code.services.impl;
 
 import hexlet.code.dto.TaskDto;
+import hexlet.code.entities.Label;
 import hexlet.code.entities.Task;
 import hexlet.code.entities.TaskStatus;
 import hexlet.code.entities.User;
@@ -17,7 +18,9 @@ import hexlet.code.config.TaskSpecifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +38,12 @@ public class TaskServiceImpl implements TaskService {
     public TaskDto.Response createTask(TaskDto.Request taskDto) {
         Task task = taskMapper.map(taskDto);
         setTaskStatusAndAssignee(task, taskDto);
-        return taskMapper.map(taskRepository.save(task));
+        if (taskDto.getLabelIds() != null && !taskDto.getLabelIds().isEmpty()) {
+            Set<Label> labels = new HashSet<>(labelRepository.findAllById(taskDto.getLabelIds()));
+            task.setLabels(labels);
+        }
+        Task savedTask = taskRepository.save(task);
+        return taskMapper.map(savedTask);
     }
 
     @Override
@@ -78,7 +86,8 @@ public class TaskServiceImpl implements TaskService {
                 .and(TaskSpecifications.hasStatus(status))
                 .and(TaskSpecifications.hasLabel(labelId));
 
-        return taskRepository.findAll(spec).stream()
+        List<Task> tasks = taskRepository.findAll(spec);
+        return tasks.stream()
                 .map(taskMapper::map)
                 .collect(Collectors.toList());
     }

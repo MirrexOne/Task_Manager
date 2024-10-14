@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class TaskDto {
 
@@ -26,6 +27,8 @@ public class TaskDto {
 
         @NotBlank
         private String status;
+
+        private Set<Long> labelIds;
     }
 
     @Data
@@ -39,5 +42,6 @@ public class TaskDto {
         private String title;
         private String content;
         private String status;
+        private Set<Long> labelIds;
     }
 }

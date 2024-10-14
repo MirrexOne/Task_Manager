@@ -7,7 +7,6 @@ import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TaskSpecifications {
-
     public static Specification<Task> titleContains(String title) {
         return (root, query, cb) -> {
             if (title == null) {
@@ -40,7 +39,7 @@ public class TaskSpecifications {
             if (labelId == null) {
                 return cb.isTrue(cb.literal(true));
             }
-            Join<Task, Label> labelJoin = root.join("labels", JoinType.LEFT);
+            Join<Task, Label> labelJoin = root.join("labels", JoinType.INNER);
             return cb.equal(labelJoin.get("id"), labelId);
         };
     }

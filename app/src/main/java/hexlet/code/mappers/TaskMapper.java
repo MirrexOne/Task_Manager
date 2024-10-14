@@ -33,13 +33,14 @@ public abstract class TaskMapper {
     @Mapping(target = "assignee", source = "assignee_id")
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "labels", ignore = true) // Игнорируем labels при маппинге, так как они не присутствуют в новом DTO
+    @Mapping(target = "labels", source = "labelIds")
     public abstract Task map(TaskDto.Request dto);
 
     @Mapping(target = "status", source = "taskStatus.slug")
     @Mapping(target = "assignee_id", source = "assignee.id")
     @Mapping(target = "title", source = "name")
     @Mapping(target = "content", source = "description")
+    @Mapping(target = "labelIds", expression = "java(entity.getLabels().stream().map(Label::getId).collect(Collectors.toSet()))")
     public abstract TaskDto.Response map(Task entity);
 
     @Mapping(target = "id", ignore = true)
@@ -48,7 +49,7 @@ public abstract class TaskMapper {
     @Mapping(target = "assignee", source = "assignee_id")
     @Mapping(target = "name", source = "title")
     @Mapping(target = "description", source = "content")
-    @Mapping(target = "labels", ignore = true) // Игнорируем labels при обновлении, так как они не присутствуют в новом DTO
+    @Mapping(target = "labels", source = "labelIds")
     public abstract void update(TaskDto.Request dto, @MappingTarget Task task);
 
     @Autowired
@@ -89,6 +90,15 @@ public abstract class TaskMapper {
         return labelIds.stream()
                 .map(id -> labelRepository.findById(id)
                         .orElseThrow(() -> new RuntimeException("Метка не найдена")))
+                .collect(Collectors.toSet());
+    }
+
+    protected Set<Long> mapLabelIds(Set<Label> labels) {
+        if (labels == null) {
+            return null;
+        }
+        return labels.stream()
+                .map(Label::getId)
                 .collect(Collectors.toSet());
     }
 }
