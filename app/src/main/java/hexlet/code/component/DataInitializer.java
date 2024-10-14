@@ -1,4 +1,4 @@
-package hexlet.code.config;
+package hexlet.code.component;
 
 import hexlet.code.entities.TaskStatus;
 import hexlet.code.entities.User;
