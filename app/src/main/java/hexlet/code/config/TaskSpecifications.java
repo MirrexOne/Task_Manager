@@ -1,6 +1,9 @@
 package hexlet.code.config;
 
+import hexlet.code.entities.Label;
 import hexlet.code.entities.Task;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 public class TaskSpecifications {
@@ -37,7 +40,8 @@ public class TaskSpecifications {
             if (labelId == null) {
                 return cb.isTrue(cb.literal(true));
             }
-            return cb.isMember(labelId, root.get("labels"));
+            Join<Task, Label> labelJoin = root.join("labels", JoinType.LEFT);
+            return cb.equal(labelJoin.get("id"), labelId);
         };
     }
 }
