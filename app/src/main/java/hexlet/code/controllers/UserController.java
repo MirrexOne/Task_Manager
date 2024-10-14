@@ -2,10 +2,11 @@ package hexlet.code.controllers;
 
 import hexlet.code.dto.requests.UpdateUserRequest;
 import hexlet.code.dto.responses.UserResponse;
-import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.services.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,17 +28,15 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        List<UserResponse> users = userService.getAllUsers();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(users.size()));
+        return new ResponseEntity<>(users, headers, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
-        try {
-            UserResponse user = userService.getUserById(id);
-            return ResponseEntity.ok(user);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")

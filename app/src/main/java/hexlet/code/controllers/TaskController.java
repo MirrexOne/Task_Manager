@@ -4,6 +4,7 @@ import hexlet.code.dto.TaskDto;
 import hexlet.code.services.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,7 +46,10 @@ public class TaskController {
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long labelId) {
-        return ResponseEntity.ok(taskService.getFilteredTasks(titleCont, assigneeId, status, labelId));
+        List<TaskDto.Response> tasks = taskService.getFilteredTasks(titleCont, assigneeId, status, labelId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(tasks.size()));
+        return new ResponseEntity<>(tasks, headers, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

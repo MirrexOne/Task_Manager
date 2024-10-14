@@ -29,20 +29,26 @@ public abstract class TaskMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "taskStatus", source = "taskStatusId")
-    @Mapping(target = "assignee", source = "assigneeId")
-    @Mapping(target = "labels", source = "labelIds")
+    @Mapping(target = "taskStatus.slug", source = "status")
+    @Mapping(target = "assignee", source = "assignee_id")
+    @Mapping(target = "name", source = "title")
+    @Mapping(target = "description", source = "content")
+    @Mapping(target = "labels", ignore = true) // Игнорируем labels при маппинге, так как они не присутствуют в новом DTO
     public abstract Task map(TaskDto.Request dto);
 
-    @Mapping(target = "taskStatus", source = "taskStatus.name")
-    @Mapping(target = "assignee", source = "assignee.email")
+    @Mapping(target = "status", source = "taskStatus.slug")
+    @Mapping(target = "assignee_id", source = "assignee.id")
+    @Mapping(target = "title", source = "name")
+    @Mapping(target = "content", source = "description")
     public abstract TaskDto.Response map(Task entity);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "taskStatus", source = "taskStatusId")
-    @Mapping(target = "assignee", source = "assigneeId")
-    @Mapping(target = "labels", source = "labelIds")
+    @Mapping(target = "taskStatus.slug", source = "status")
+    @Mapping(target = "assignee", source = "assignee_id")
+    @Mapping(target = "name", source = "title")
+    @Mapping(target = "description", source = "content")
+    @Mapping(target = "labels", ignore = true) // Игнорируем labels при обновлении, так как они не присутствуют в новом DTO
     public abstract void update(TaskDto.Request dto, @MappingTarget Task task);
 
     @Autowired
@@ -60,11 +66,11 @@ public abstract class TaskMapper {
         this.labelRepository = labelRepository;
     }
 
-    protected TaskStatus mapTaskStatus(Long taskStatusId) {
-        if (taskStatusId == null) {
+    protected TaskStatus mapTaskStatus(String status) {
+        if (status == null) {
             return null;
         }
-        return taskStatusRepository.findById(taskStatusId)
+        return taskStatusRepository.findBySlug(status)
                 .orElseThrow(() -> new RuntimeException("TaskStatus не найден"));
     }
 

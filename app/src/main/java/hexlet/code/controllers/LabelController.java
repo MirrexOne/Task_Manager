@@ -4,6 +4,7 @@ import hexlet.code.dto.LabelDto;
 import hexlet.code.services.LabelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,15 +33,16 @@ public class LabelController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<LabelDto.Response> getLabel(@PathVariable Long id) {
         return ResponseEntity.ok(labelService.getLabelById(id));
     }
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<LabelDto.Response>> getAllLabels() {
-        return ResponseEntity.ok(labelService.getAllLabels());
+        List<LabelDto.Response> labels = labelService.getAllLabels();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(labels.size()));
+        return new ResponseEntity<>(labels, headers, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

@@ -1,14 +1,12 @@
 package hexlet.code.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public class TaskDto {
 
@@ -17,15 +15,17 @@ public class TaskDto {
     @AllArgsConstructor
     public static class Request {
         private Integer index;
+
+        @NotNull
+        private Long assignee_id;
+
         @NotBlank
-        @Size(min = 1)
-        private String name;
-        private String description;
-        @Getter
-        private Long taskStatusId;
-        @Getter
-        private Long assigneeId;
-        private Set<Long> labelIds;
+        private String title;
+
+        private String content;
+
+        @NotBlank
+        private String status;
     }
 
     @Data
@@ -34,11 +34,10 @@ public class TaskDto {
     public static class Response {
         private Long id;
         private Integer index;
-        private String name;
-        private String description;
-        private String taskStatus;
-        private String assignee;
         private LocalDate createdAt;
-        private Set<LabelDto.Response> labels;
+        private Long assignee_id;
+        private String title;
+        private String content;
+        private String status;
     }
 }

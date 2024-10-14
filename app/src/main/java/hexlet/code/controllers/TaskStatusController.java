@@ -4,6 +4,7 @@ import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.services.TaskStatusService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,7 +39,10 @@ public class TaskStatusController {
 
     @GetMapping
     public ResponseEntity<List<TaskStatusDto.Response>> getAllTaskStatuses() {
-        return ResponseEntity.ok(taskStatusService.getAllTaskStatuses());
+        List<TaskStatusDto.Response> statuses = taskStatusService.getAllTaskStatuses();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Total-Count", String.valueOf(statuses.size()));
+        return new ResponseEntity<>(statuses, headers, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
