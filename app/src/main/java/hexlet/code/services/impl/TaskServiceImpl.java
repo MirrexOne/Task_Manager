@@ -21,8 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,56 +36,61 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskDto.Response createTask(TaskDto.Request taskRequest) {
-        Task task = taskMapper.map(taskRequest);
+        Task task = taskMapper.toTask(taskRequest);
         setTaskStatusAndAssignee(task, taskRequest);
         Task saved = taskRepository.save(task);
-        return taskMapper.map(saved);
+        return taskMapper.toTaskResponse(saved);
     }
 
     @Override
     public TaskDto.Response getTaskById(Long id) {
-        return taskMapper.map(findTaskById(id));
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        return taskMapper.toTaskResponse(task);
     }
 
     @Override
     public List<TaskDto.Response> findAll(TaskParams taskParams) {
         Specification<Task> specification = taskSpecifications.build(taskParams);
-        return taskRepository.findAll(specification).stream()
-                .map(taskMapper::map)
-                .collect(Collectors.toList());
+        return taskRepository.findAll(specification)
+                .stream()
+                .map(taskMapper::toTaskResponse)
+                .toList();
     }
 
     @Override
     public TaskDto.Response updateTask(Long id, TaskDto.Request taskDto) {
-        Task task = findTaskById(id);
-        taskMapper.update(taskDto, task);
-        setTaskStatusAndAssignee(task, taskDto);
-        return taskMapper.map(taskRepository.save(task));
+        Task task = taskRepository.findById(id).orElseThrow();
+        Task updated = taskMapper.partialUpdate(taskDto, task);
+        setTaskStatusAndAssignee(updated, taskDto);
+        Task saved = taskRepository.save(updated);
+        return taskMapper.toTaskResponse(saved);
     }
 
     @Override
     public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Задача не найдена");
+            throw new ResourceNotFoundException("Task not found");
         }
+
         taskRepository.deleteById(id);
     }
 
-    private Task findTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Задача не найдена"));
-    }
-
-    private void setTaskStatusAndAssignee(Task task, TaskDto.Request taskDto) {
-        if (taskDto.getStatus() != null) {
-            TaskStatus taskStatus = taskStatusRepository.findBySlug(taskDto.getStatus())
-                    .orElseThrow(() -> new ResourceNotFoundException("Статус задачи не найден"));
-            task.setTaskStatus(taskStatus);
+    private void setTaskStatusAndAssignee(Task task, TaskDto.Request taskRequest) {
+        TaskStatus taskStatus = null;
+        if (taskRequest.getStatus() != null) {
+            taskStatus = taskStatusRepository.findBySlug(taskRequest.getStatus()).orElseThrow();
         }
-        if (taskDto.getAssigneeId() != null) {
-            User assignee = userRepository.findById(taskDto.getAssigneeId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
-            task.setAssignee(assignee);
+        User user = null;
+        if (taskRequest.getAssigneeId() != null) {
+            user = userRepository.findById(taskRequest.getAssigneeId()).orElseThrow();
         }
+        List<Label> labels = null;
+        if (taskRequest.getLabelIds() != null) {
+            labels = labelRepository.findAllById(taskRequest.getLabelIds());
+        }
+        task.setTaskStatus(taskStatus);
+        task.setAssignee(user);
+        task.setLabels(labels != null ? new HashSet<>(labels) : new HashSet<>());
     }
 }

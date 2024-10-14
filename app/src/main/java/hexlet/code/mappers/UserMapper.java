@@ -4,25 +4,18 @@ import hexlet.code.dto.requests.CreateUserRequest;
 import hexlet.code.dto.requests.UpdateUserRequest;
 import hexlet.code.dto.responses.UserResponse;
 import hexlet.code.entities.User;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.ReportingPolicy;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface UserMapper {
+    User toEntity(CreateUserRequest userRequestDto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    User toUser(CreateUserRequest createUserRequest);
+    UserResponse toDto(User user);
 
-    UserResponse toUserResponse(User user);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "password", ignore = true)
-    void updateUserFromDto(UpdateUserRequest updateUserRequest, @MappingTarget User user);
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    User partialUpdate(UpdateUserRequest userRequestDto, @MappingTarget User user);
 }

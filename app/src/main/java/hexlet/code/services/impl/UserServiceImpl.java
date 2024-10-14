@@ -29,29 +29,26 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return userMapper.toUserResponse(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(userMapper::toUserResponse)
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest updateUserRequest) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new CustomException("User not found"));
-
-        userMapper.updateUserFromDto(updateUserRequest, user);
-
         if (updateUserRequest.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(updateUserRequest.getPassword()));
+            String encodedPassword = passwordEncoder.encode(updateUserRequest.getPassword());
+            updateUserRequest.setPassword(encodedPassword);
         }
-
-        User updatedUser = userRepository.save(user);
-        return userMapper.toUserResponse(updatedUser);
+        User user = userRepository.findById(id).orElseThrow();
+        User updated = userMapper.partialUpdate(updateUserRequest, user);
+        User saved = userRepository.save(updated);
+        return userMapper.toDto(saved);
     }
 
     @Override

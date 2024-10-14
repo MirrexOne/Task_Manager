@@ -40,10 +40,10 @@ public class AuthServiceImpl implements AuthService {
             throw new CustomException("User already exists");
         }
 
-        User user = userMapper.toUser(createUserRequest);
+        User user = userMapper.toEntity(createUserRequest);
         user.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userMapper.toDto(userRepository.save(user));
     }
 
     @Override

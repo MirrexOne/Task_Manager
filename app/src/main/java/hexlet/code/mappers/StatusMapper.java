@@ -1,7 +1,7 @@
 package hexlet.code.mappers;
 
-import hexlet.code.dto.LabelDto;
-import hexlet.code.entities.Label;
+import hexlet.code.dto.TaskStatusDto;
+import hexlet.code.entities.TaskStatus;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
@@ -9,13 +9,12 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 
-
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
-public interface LabelMapper {
-    LabelDto.Response toLabelResponse(Label label);
+public interface StatusMapper {
+    TaskStatusDto.Response toDto(TaskStatus taskStatus);
 
-    Label toEntity(LabelDto.Request labelRequest);
+    TaskStatus toEntity(TaskStatusDto.Request taskStatusRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Label partialUpdate(LabelDto.Request labelRequest, @MappingTarget Label label);
+    TaskStatus partialUpdate(TaskStatusDto.Request taskStatusRequest, @MappingTarget TaskStatus taskStatus);
 }

@@ -2,20 +2,19 @@ package hexlet.code.controllers;
 
 import hexlet.code.dto.LabelDto;
 import hexlet.code.services.LabelService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -26,36 +25,33 @@ public class LabelController {
 
     private final LabelService labelService;
 
+    @PutMapping("/{id}")
+    public ResponseEntity<LabelDto.Response> updateById(
+            @PathVariable Long id,
+            @RequestBody LabelDto.Request labelRequest) {
+        return ResponseEntity.ok(labelService.updateLabel(id, labelRequest));
+    }
+
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<LabelDto.Response> createLabel(@Valid @RequestBody LabelDto.Request request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(labelService.createLabel(request));
+    public ResponseEntity<LabelDto.Response> save(@RequestBody LabelDto.Request labelRequest) {
+        return new ResponseEntity<>(labelService.createLabel(labelRequest), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LabelDto.Response> getLabel(@PathVariable Long id) {
+    public ResponseEntity<LabelDto.Response> findById(@PathVariable Long id) {
         return ResponseEntity.ok(labelService.getLabelById(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<LabelDto.Response>> getAllLabels() {
+    public ResponseEntity<List<LabelDto.Response>> findAll() {
         List<LabelDto.Response> labels = labelService.getAllLabels();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(labels.size()));
         return new ResponseEntity<>(labels, headers, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<LabelDto.Response> updateLabel(
-            @PathVariable Long id,
-            @Valid @RequestBody LabelDto.Request request) {
-        return ResponseEntity.ok(labelService.updateLabel(id, request));
-    }
-
     @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> deleteLabel(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         labelService.deleteLabel(id);
         return ResponseEntity.noContent().build();
     }

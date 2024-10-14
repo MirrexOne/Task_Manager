@@ -8,14 +8,11 @@ import hexlet.code.repositories.LabelRepository;
 import hexlet.code.services.LabelService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Service
-@Transactional
 @RequiredArgsConstructor
+@Service
 public class LabelServiceImpl implements LabelService {
 
     private final LabelRepository labelRepository;
@@ -24,40 +21,37 @@ public class LabelServiceImpl implements LabelService {
 
     @Override
     public LabelDto.Response createLabel(LabelDto.Request labelDto) {
-        Label label = labelMapper.map(labelDto);
-        return labelMapper.map(labelRepository.save(label));
+        Label entity = labelMapper.toEntity(labelDto);
+        Label saved = labelRepository.save(entity);
+        return labelMapper.toLabelResponse(saved);
     }
 
     @Override
     public LabelDto.Response getLabelById(Long id) {
-        return labelMapper.map(findLabelById(id));
+        Label label = labelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label not found"));
+        return labelMapper.toLabelResponse(label);
     }
 
     @Override
     public List<LabelDto.Response> getAllLabels() {
-        return labelRepository.findAll().stream()
-                .map(labelMapper::map)
-                .collect(Collectors.toList());
+        return labelRepository.findAll()
+                .stream()
+                .map(labelMapper::toLabelResponse)
+                .toList();
     }
 
     @Override
     public LabelDto.Response updateLabel(Long id, LabelDto.Request labelDto) {
-        Label label = findLabelById(id);
-        labelMapper.update(labelDto, label);
-        return labelMapper.map(labelRepository.save(label));
+        Label label = labelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label not found"));
+        Label updated = labelMapper.partialUpdate(labelDto, label);
+        Label saved = labelRepository.save(updated);
+        return labelMapper.toLabelResponse(saved);
     }
 
     @Override
     public void deleteLabel(Long id) {
-        Label label = findLabelById(id);
-        if (!label.getTasks().isEmpty()) {
-            throw new IllegalStateException("Невозможно удалить метку, связанную с задачами");
-        }
         labelRepository.deleteById(id);
-    }
-
-    private Label findLabelById(Long id) {
-        return labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Метка не найдена"));
     }
 }
