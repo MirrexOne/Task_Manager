@@ -1,6 +1,7 @@
 package hexlet.code.controllers;
 
 import hexlet.code.dto.TaskDto;
+import hexlet.code.dto.TaskParams;
 import hexlet.code.services.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,12 +42,8 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<TaskDto.Response>> getTasks(
-            @RequestParam(required = false) String titleCont,
-            @RequestParam(required = false) Long assigneeId,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) Long labelId) {
-        List<TaskDto.Response> tasks = taskService.getFilteredTasks(titleCont, assigneeId, status, labelId);
+    public ResponseEntity<List<TaskDto.Response>> getTasks(TaskParams taskParams) {
+        List<TaskDto.Response> tasks = taskService.findAll(taskParams);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Total-Count", String.valueOf(tasks.size()));
         return new ResponseEntity<>(tasks, headers, HttpStatus.OK);

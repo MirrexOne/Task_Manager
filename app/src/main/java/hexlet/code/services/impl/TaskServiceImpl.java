@@ -1,6 +1,8 @@
 package hexlet.code.services.impl;
 
+import hexlet.code.config.TaskSpecifications;
 import hexlet.code.dto.TaskDto;
+import hexlet.code.dto.TaskParams;
 import hexlet.code.entities.Label;
 import hexlet.code.entities.Task;
 import hexlet.code.entities.TaskStatus;
@@ -14,7 +16,6 @@ import hexlet.code.repositories.LabelRepository;
 import hexlet.code.services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import hexlet.code.config.TaskSpecifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,17 +34,14 @@ public class TaskServiceImpl implements TaskService {
     private final TaskStatusRepository taskStatusRepository;
     private final LabelRepository labelRepository;
     private final TaskMapper taskMapper;
+    private final TaskSpecifications taskSpecifications;
 
     @Override
-    public TaskDto.Response createTask(TaskDto.Request taskDto) {
-        Task task = taskMapper.map(taskDto);
-        setTaskStatusAndAssignee(task, taskDto);
-        if (taskDto.getLabelIds() != null && !taskDto.getLabelIds().isEmpty()) {
-            Set<Label> labels = new HashSet<>(labelRepository.findAllById(taskDto.getLabelIds()));
-            task.setLabels(labels);
-        }
-        Task savedTask = taskRepository.save(task);
-        return taskMapper.map(savedTask);
+    public TaskDto.Response createTask(TaskDto.Request taskRequest) {
+        Task task = taskMapper.map(taskRequest);
+        setTaskStatusAndAssignee(task, taskRequest);
+        Task saved = taskRepository.save(task);
+        return taskMapper.map(saved);
     }
 
     @Override
@@ -52,8 +50,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto.Response> getAllTasks() {
-        return taskRepository.findAll().stream()
+    public List<TaskDto.Response> findAll(TaskParams taskParams) {
+        Specification<Task> specification = taskSpecifications.build(taskParams);
+        return taskRepository.findAll(specification).stream()
                 .map(taskMapper::map)
                 .collect(Collectors.toList());
     }
@@ -77,19 +76,6 @@ public class TaskServiceImpl implements TaskService {
     private Task findTaskById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Задача не найдена"));
-    }
-
-    @Override
-    public List<TaskDto.Response> getFilteredTasks(String titleCont, Long assigneeId, String status, Long labelId) {
-        Specification<Task> spec = Specification.where(TaskSpecifications.titleContains(titleCont))
-                .and(TaskSpecifications.hasAssignee(assigneeId))
-                .and(TaskSpecifications.hasStatus(status))
-                .and(TaskSpecifications.hasLabel(labelId));
-
-        List<Task> tasks = taskRepository.findAll(spec);
-        return tasks.stream()
-                .map(taskMapper::map)
-                .collect(Collectors.toList());
     }
 
     private void setTaskStatusAndAssignee(Task task, TaskDto.Request taskDto) {
