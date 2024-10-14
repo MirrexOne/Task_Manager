@@ -98,8 +98,8 @@ public class TaskServiceImpl implements TaskService {
                     .orElseThrow(() -> new ResourceNotFoundException("Статус задачи не найден"));
             task.setTaskStatus(taskStatus);
         }
-        if (taskDto.getAssignee_id() != null) {
-            User assignee = userRepository.findById(taskDto.getAssignee_id())
+        if (taskDto.getAssigneeId() != null) {
+            User assignee = userRepository.findById(taskDto.getAssigneeId())
                     .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден"));
             task.setAssignee(assignee);
         }

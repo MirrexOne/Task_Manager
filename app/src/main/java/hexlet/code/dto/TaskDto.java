@@ -18,7 +18,7 @@ public class TaskDto {
         private Integer index;
 
         @NotNull
-        private Long assignee_id;
+        private Long assigneeId;
 
         @NotBlank
         private String title;
@@ -38,7 +38,7 @@ public class TaskDto {
         private Long id;
         private Integer index;
         private LocalDate createdAt;
-        private Long assignee_id;
+        private Long assigneeId;
         private String title;
         private String content;
         private String status;

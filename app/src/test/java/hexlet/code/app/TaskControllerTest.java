@@ -94,9 +94,9 @@ public class TaskControllerTest {
     @Test
     void testCreateTask() throws Exception {
         TaskDto.Request request = new TaskDto.Request();
-        request.setName("New Task");
-        request.setDescription("New Description");
-        request.setTaskStatusId(testStatus.getId());
+        request.setTitle("New Task");
+        request.setContent("New Description");
+        request.setAssigneeId(testStatus.getId());
         request.setAssigneeId(testUser.getId());
 
         mockMvc.perform(post(BASE_URL)
@@ -137,8 +137,8 @@ public class TaskControllerTest {
     @Test
     void testUpdateTask() throws Exception {
         TaskDto.Request request = new TaskDto.Request();
-        request.setName("Updated Task");
-        request.setDescription("Updated Description");
+        request.setTitle("Updated Task");
+        request.setContent("Updated Description");
 
         mockMvc.perform(put(BASE_URL + "/{id}", testTask.getId())
                         .header(AUTH_HEADER, String.format(BEARER_TOKEN, token))
