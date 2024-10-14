@@ -1,3 +1,4 @@
+import io.sentry.android.gradle.sourcecontext.BundleSourcesTask
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
@@ -5,6 +6,7 @@ plugins {
     application
     checkstyle
     jacoco
+    id("io.sentry.jvm.gradle") version "4.11.0"
     id("io.freefair.lombok") version "8.10.2"
     id("org.springframework.boot") version "3.3.3"
     id("io.spring.dependency-management") version "1.1.6"
@@ -27,7 +29,23 @@ repositories {
     mavenCentral()
 }
 
+sentry {
+    // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+    // This enables source context, allowing you to see your source
+    // code as part of your stack traces in Sentry.
+    includeSourceContext = true
+
+    org.set("mirrexdev")
+    projectName.set("java-spring-boot")
+    authToken.set(System.getenv("SENTRY_AUTH_TOKEN"))
+}
+
+tasks.withType(BundleSourcesTask::class.java) {
+    enabled = System.getenv("SENTRY_AUTH_TOKEN") != null
+}
+
 dependencies {
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.15.0")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
