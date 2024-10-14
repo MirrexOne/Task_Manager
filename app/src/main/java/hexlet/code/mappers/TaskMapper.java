@@ -40,7 +40,7 @@ public abstract class TaskMapper {
     @Mapping(target = "assignee_id", source = "assignee.id")
     @Mapping(target = "title", source = "name")
     @Mapping(target = "content", source = "description")
-    @Mapping(target = "labelIds", expression = "java(entity.getLabels().stream().map(Label::getId).collect(Collectors.toSet()))")
+    @Mapping(target = "labelIds", source = "labels")
     public abstract TaskDto.Response map(Task entity);
 
     @Mapping(target = "id", ignore = true)
