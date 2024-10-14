@@ -36,7 +36,7 @@ public class Task {
     @Size(min = 1)
     private String name;
 
-    private Integer index;
+    private Long index;
 
     private String description;
 

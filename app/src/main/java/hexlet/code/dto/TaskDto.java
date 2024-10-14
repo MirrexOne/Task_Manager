@@ -1,5 +1,6 @@
 package hexlet.code.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -15,9 +16,11 @@ public class TaskDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Request {
-        private Integer index;
+
+        private Long index;
 
         @NotNull
+        @JsonProperty("assignee_id")
         private Long assigneeId;
 
         @NotBlank
@@ -35,13 +38,22 @@ public class TaskDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Response {
+
         private Long id;
-        private Integer index;
+
+        private Long index;
+
         private LocalDate createdAt;
+
+        @JsonProperty("assignee_id")
         private Long assigneeId;
+
         private String title;
+
         private String content;
+
         private String status;
+
         private Set<Long> labelIds;
     }
 }
