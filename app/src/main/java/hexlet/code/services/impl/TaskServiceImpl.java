@@ -13,6 +13,8 @@ import hexlet.code.repositories.UserRepository;
 import hexlet.code.repositories.LabelRepository;
 import hexlet.code.services.TaskService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
+import hexlet.code.config.TaskSpecifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +71,18 @@ public class TaskServiceImpl implements TaskService {
     private Task findTaskById(Long id) {
         return taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Задача не найдена"));
+    }
+
+    @Override
+    public List<TaskDto.Response> getFilteredTasks(String titleCont, Long assigneeId, String status, Long labelId) {
+        Specification<Task> spec = Specification.where(TaskSpecifications.titleContains(titleCont))
+                .and(TaskSpecifications.hasAssignee(assigneeId))
+                .and(TaskSpecifications.hasStatus(status))
+                .and(TaskSpecifications.hasLabel(labelId));
+
+        return taskRepository.findAll(spec).stream()
+                .map(taskMapper::map)
+                .collect(Collectors.toList());
     }
 
     private void setTaskStatusAndAssigneeAndLabels(Task task, TaskDto.Request taskDto) {

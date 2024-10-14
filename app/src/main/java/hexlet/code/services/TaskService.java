@@ -11,6 +11,8 @@ public interface TaskService {
 
     List<TaskDto.Response> getAllTasks();
 
+    List<TaskDto.Response> getFilteredTasks(String titleCont, Long assigneeId, String status, Long labelId);
+
     TaskDto.Response updateTask(Long id, TaskDto.Request taskDto);
 
     void deleteTask(Long id);
