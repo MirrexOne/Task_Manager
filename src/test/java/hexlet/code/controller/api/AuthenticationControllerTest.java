@@ -30,7 +30,7 @@ public class AuthenticationControllerTest {
     @Test
     public void testIndex() throws Exception {
         AuthRequest authRequest = new AuthRequest();
-        authRequest.setUsername("hexlet@example.com");
+        authRequest.setUsername("mirrex@dev.io");
         authRequest.setPassword("qwerty");
 
         MockHttpServletRequestBuilder request = post(url).with(jwt())
