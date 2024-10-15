@@ -44,7 +44,7 @@ repositories {
 sentry {
 	includeSourceContext = true
 
-	org = "hexlet-g0"
+	org = "mirrexdev"
 	projectName = "java-spring-boot"
 	authToken = System.getenv("SENTRY_AUTH_TOKEN")
 }
