@@ -6,6 +6,7 @@ import hexlet.code.dto.responses.UserResponse;
 import hexlet.code.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,6 @@ public class AuthController {
 
     @PostMapping("/users")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest createUserRequest) {
-        return ResponseEntity.ok().body(authService.createUser(createUserRequest));
+        return new ResponseEntity<>(authService.createUser(createUserRequest), HttpStatus.CREATED);
     }
 }
