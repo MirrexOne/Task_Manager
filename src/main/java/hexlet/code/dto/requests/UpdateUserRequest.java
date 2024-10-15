@@ -1,21 +1,18 @@
 package hexlet.code.dto.requests;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateUserRequest {
 
-    @Email(message = "Email not valid")
     private String email;
 
-    @Size(min = 3, max = 100, message = "First name should be between 3 and 100 characters")
     private String firstName;
 
-    @Size(min = 3, max = 100, message = "Last name should be between 3 and 100 characters")
     private String lastName;
 
     private String password;
