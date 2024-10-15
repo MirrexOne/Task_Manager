@@ -11,62 +11,58 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
 public class DataInitializer implements ApplicationRunner {
-    //поля - это зависимости во всех классах, где есть конструктор
     private final PasswordEncoder passwordEncoder;
     private final TaskStatusRepository taskStatusRepository;
     private final LabelRepository labelRepository;
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public void run(ApplicationArguments args) {
-        Optional<User> firstUser = userRepository.findByEmail("mirrex@dev.io");
-        if (firstUser.isEmpty()) {
-            var email = "mirrex@dev.io";
-            var userData = new User();
-            userData.setEmail(email);
-            userData.setPasswordDigest(passwordEncoder.encode("qwerty"));
-            userRepository.save(userData);
+        initializeUser();
+        initializeTaskStatuses();
+        initializeLabels();
+    }
 
-            taskStatusesInitializer();
-            labelsInitializer();
+    private void initializeUser() {
+        if (userRepository.findByEmail("mirrex@dev.io").isEmpty()) {
+            var user = new User();
+            user.setEmail("mirrex@dev.io");
+            user.setPasswordDigest(passwordEncoder.encode("qwerty"));
+            userRepository.save(user);
         }
     }
 
-    public final void taskStatusesInitializer() { //метод для первичной инициализации 5 статусов для задач
-        Map<String, String> firstStructure = new HashMap<>();
+    private void initializeTaskStatuses() {
+        if (taskStatusRepository.count() == 0) {
+            Map<String, String> statuses = new HashMap<>();
+            statuses.put("Draft", "draft");
+            statuses.put("ToReview", "to_review");
+            statuses.put("ToBeFixed", "to_be_fixed");
+            statuses.put("ToPublish", "to_publish");
+            statuses.put("Published", "published");
 
-        firstStructure.put("Draft", "draft");
-        firstStructure.put("ToReview", "to_review");
-        firstStructure.put("ToBeFixed", "to_be_fixed");
-        firstStructure.put("ToPublish", "to_publish");
-        firstStructure.put("Published", "published");
-
-        firstStructure.entrySet().stream()
-                .map(entry -> {
-                    TaskStatus taskStatus = new TaskStatus();
-                    taskStatus.setName(entry.getKey());
-                    taskStatus.setSlug(entry.getValue());
-                    return taskStatus;
-                })
-                .forEach(taskStatusRepository::save);
+            statuses.forEach((name, slug) -> {
+                TaskStatus status = new TaskStatus();
+                status.setName(name);
+                status.setSlug(slug);
+                taskStatusRepository.save(status);
+            });
+        }
     }
 
-    public final void labelsInitializer() { //метод для первичной инициализации 2 лейблов для задач
-        Label label1 = new Label();
-        Label label2 = new Label();
-
-        label1.setName("feature");
-        label2.setName("bug");
-
-        labelRepository.save(label1);
-        labelRepository.save(label2);
+    private void initializeLabels() {
+        if (labelRepository.count() == 0) {
+            labelRepository.save(new Label("feature"));
+            labelRepository.save(new Label("bug"));
+        }
     }
 }
