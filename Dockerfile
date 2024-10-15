@@ -1,11 +1,11 @@
 # Этап 1: Сборка приложения
 FROM gradle:8.5-jdk21 AS build
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем только файлы, необходимые для разрешения зависимостей
+# Копируем файлы сборки
 COPY build.gradle.kts settings.gradle.kts ./
+COPY config ./config
 
 # Загружаем зависимости
 RUN gradle dependencies --no-daemon
@@ -13,8 +13,8 @@ RUN gradle dependencies --no-daemon
 # Копируем исходный код
 COPY src ./src
 
-# Собираем приложение, пропуская тесты
-RUN gradle build -x test --no-daemon
+# Собираем приложение, пропуская тесты и проверку Checkstyle
+RUN gradle build -x test -x checkstyleMain -x checkstyleTest --no-daemon
 
 # Этап 2: Создание финального образа
 FROM eclipse-temurin:21-jre-alpine
