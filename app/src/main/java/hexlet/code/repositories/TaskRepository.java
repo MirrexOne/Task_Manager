@@ -1,8 +1,6 @@
 package hexlet.code.repositories;
 
 import hexlet.code.entities.Task;
-import hexlet.code.entities.TaskStatus;
-import hexlet.code.entities.User;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

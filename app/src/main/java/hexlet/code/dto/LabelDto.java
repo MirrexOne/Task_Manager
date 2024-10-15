@@ -6,15 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
-public class LabelDto implements Serializable {
+public class LabelDto {
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request implements Serializable {
+    public static class Request {
         @NotBlank
         @Size(min = 3, max = 1000)
         private String name;
@@ -23,7 +22,7 @@ public class LabelDto implements Serializable {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Response implements Serializable {
+    public static class Response {
         private Long id;
         @Size(min = 3, max = 1000)
         private String name;

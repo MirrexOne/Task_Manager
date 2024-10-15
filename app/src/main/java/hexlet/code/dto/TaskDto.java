@@ -7,16 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-public class TaskDto implements Serializable {
+public class TaskDto {
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Request implements Serializable {
+    public static class Request {
 
         private Long index;
 
@@ -38,7 +37,7 @@ public class TaskDto implements Serializable {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Response implements Serializable {
+    public static class Response {
 
         private Long id;
 
