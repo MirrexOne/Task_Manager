@@ -96,7 +96,7 @@ public class TaskControllerTest {
         TaskDto.Request request = new TaskDto.Request();
         request.setTitle("New Task");
         request.setContent("New Description");
-        request.setAssigneeId(testStatus.getId());
+        request.setStatus("in_progress");
         request.setAssigneeId(testUser.getId());
 
         mockMvc.perform(post(BASE_URL)
@@ -104,10 +104,10 @@ public class TaskControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("New Task"))
-                .andExpect(jsonPath("$.description").value("New Description"))
-                .andExpect(jsonPath("$.taskStatus").value("In Progress"))
-                .andExpect(jsonPath("$.assignee").value("test@example.com"));
+                .andExpect(jsonPath("$.title").value("New Task"))
+                .andExpect(jsonPath("$.content").value("New Description"))
+                .andExpect(jsonPath("$.status").value("in_progress"))
+                .andExpect(jsonPath("$.assignee_id").value(testUser.getId()));
     }
 
     @Test
@@ -116,10 +116,10 @@ public class TaskControllerTest {
                         .header(AUTH_HEADER, String.format(BEARER_TOKEN, token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testTask.getId()))
-                .andExpect(jsonPath("$.name").value("Test Task"))
-                .andExpect(jsonPath("$.description").value("Test Description"))
-                .andExpect(jsonPath("$.taskStatus").value("In Progress"))
-                .andExpect(jsonPath("$.assignee").value("test@example.com"));
+                .andExpect(jsonPath("$.title").value("Test Task"))
+                .andExpect(jsonPath("$.content").value("Test Description"))
+                .andExpect(jsonPath("$.status").value("in_progress"))
+                .andExpect(jsonPath("$.assignee_id").value(testUser.getId()));
     }
 
     @Test
@@ -128,10 +128,10 @@ public class TaskControllerTest {
                         .header(AUTH_HEADER, String.format(BEARER_TOKEN, token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(testTask.getId()))
-                .andExpect(jsonPath("$[0].name").value("Test Task"))
-                .andExpect(jsonPath("$[0].description").value("Test Description"))
-                .andExpect(jsonPath("$[0].taskStatus").value("In Progress"))
-                .andExpect(jsonPath("$[0].assignee").value("test@example.com"));
+                .andExpect(jsonPath("$[0].title").value("Test Task"))
+                .andExpect(jsonPath("$[0].content").value("Test Description"))
+                .andExpect(jsonPath("$[0].status").value("in_progress"))
+                .andExpect(jsonPath("$[0].assignee_id").value("8"));
     }
 
     @Test
@@ -139,6 +139,8 @@ public class TaskControllerTest {
         TaskDto.Request request = new TaskDto.Request();
         request.setTitle("Updated Task");
         request.setContent("Updated Description");
+        request.setStatus("in_progress");
+        request.setAssigneeId(testUser.getId());
 
         mockMvc.perform(put(BASE_URL + "/{id}", testTask.getId())
                         .header(AUTH_HEADER, String.format(BEARER_TOKEN, token))
@@ -146,10 +148,10 @@ public class TaskControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testTask.getId()))
-                .andExpect(jsonPath("$.name").value("Updated Task"))
-                .andExpect(jsonPath("$.description").value("Updated Description"))
-                .andExpect(jsonPath("$.taskStatus").value("In Progress"))
-                .andExpect(jsonPath("$.assignee").value("test@example.com"));
+                .andExpect(jsonPath("$.title").value("Updated Task"))
+                .andExpect(jsonPath("$.content").value("Updated Description"))
+                .andExpect(jsonPath("$.status").value("in_progress"))
+                .andExpect(jsonPath("$.assignee_id").value(testUser.getId()));
     }
 
     @Test
