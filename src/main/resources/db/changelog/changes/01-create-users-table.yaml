@@ -3,6 +3,7 @@ databaseChangeLog:
       id: 01-create-users-table
       author: alex belovitsky
       preConditions:
+        - onFail: MARK_RAN
         - not:
             tableExists:
               tableName: users
@@ -34,16 +35,3 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: timestamp
-
-  - changeSet:
-      id: 02-add-password-digest-to-users
-      author: alex belovitsky
-      changes:
-        - addColumn:
-            tableName: users
-            columns:
-              - column:
-                  name: password_digest
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
