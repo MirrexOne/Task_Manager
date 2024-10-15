@@ -1,6 +1,6 @@
 FROM gradle:8.5.0-jdk21 AS build
 WORKDIR /
-COPY /app .
+COPY / .
 RUN gradle clean build
 
 FROM openjdk:21-jdk-slim-bullseye
