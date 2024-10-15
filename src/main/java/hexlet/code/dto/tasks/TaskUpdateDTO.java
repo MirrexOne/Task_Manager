@@ -9,24 +9,23 @@ import org.openapitools.jackson.nullable.JsonNullable;
 
 import java.util.Set;
 
+
 @Getter
 @Setter
 public class TaskUpdateDTO {
+
+    private JsonNullable<Integer> index;
+
     @JsonProperty("assignee_id")
     private JsonNullable<Long> assigneeId;
 
     @NotBlank
-    @JsonProperty("title")
-    private JsonNullable<String> name;
+    private JsonNullable<String> title;
 
-    @JsonProperty("content")
-    private JsonNullable<String> description;
+    private JsonNullable<String> content;
 
     @NotNull
-    @JsonProperty("status")
     private JsonNullable<String> status;
 
-    @JsonProperty("taskLabelIds")
     private JsonNullable<Set<Long>> taskLabelIds;
-
 }

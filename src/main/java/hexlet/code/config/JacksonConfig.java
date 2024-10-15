@@ -16,4 +16,3 @@ public class JacksonConfig {
         return builder;
     }
 }
-//класс соединяет зависимости нуллабл

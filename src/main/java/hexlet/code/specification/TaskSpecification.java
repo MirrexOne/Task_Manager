@@ -1,36 +1,42 @@
 package hexlet.code.specification;
 
-import hexlet.code.dto.tasks.TaskParamsDTO;
+import hexlet.code.dto.tasks.TaskFilterDTO;
 import hexlet.code.model.Task;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskSpecification {
-    public Specification build(TaskParamsDTO params) {
-        return withTitleCount(params.getTitleCont())
-                .and(withAssigneeId(params.getAssigneeId()))
-                .and(withStatus(params.getStatus()))
-                .and(withLabelId(params.getLabelId()));
+
+    public Specification<Task> build(TaskFilterDTO filters) {
+        return withAssignee(filters.getAssigneeId())
+                .and(withTitleCont(filters.getTitleCont()))
+                .and(withStatus(filters.getStatus())
+                .and(withLabel(filters.getLabelId())));
     }
-    private Specification<Task> withTitleCount(String titleCount) {
-        return (root, query, cb) -> titleCount == null
+
+    private Specification<Task> withTitleCont(String substring) {
+        return (root, query, cb) -> substring == null
                 ? cb.conjunction()
-                : cb.like((root.get("name")), "%" + titleCount + "%");
+                : cb.like(cb.lower(root.get("name")), "%" + substring.toLowerCase() + "%");
     }
-    private Specification<Task> withAssigneeId(Long assigneeId) {
+
+    private Specification<Task> withAssignee(Long assigneeId) {
         return (root, query, cb) -> assigneeId == null
                 ? cb.conjunction()
-                : cb.equal(root.get("assignee").get("id"), assigneeId);
+                : cb.equal(root.join("assignee").get("id"), assigneeId);
     }
+
     private Specification<Task> withStatus(String status) {
         return (root, query, cb) -> status == null
                 ? cb.conjunction()
-                : cb.equal(root.get("taskStatus").get("slug"), status);
+                : cb.equal(root.join("taskStatus", JoinType.INNER).get("slug"), status);
     }
-    private Specification<Task> withLabelId(Long labelId) {
+
+    private Specification<Task> withLabel(Long labelId) {
         return (root, query, cb) -> labelId == null
                 ? cb.conjunction()
-                : cb.equal(root.get("labels").get("id"), labelId);
+                : cb.equal(root.join("labels", JoinType.INNER).get("id"), labelId);
     }
 }

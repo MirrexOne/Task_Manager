@@ -5,50 +5,55 @@ import hexlet.code.dto.labels.LabelDTO;
 import hexlet.code.dto.labels.LabelUpdateDTO;
 import hexlet.code.exception.ResourceNotFoundException;
 import hexlet.code.mapper.LabelMapper;
-import hexlet.code.model.Label;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.repository.TaskRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
+@Slf4j
 @Service
 @AllArgsConstructor
 public class LabelService {
-    private final LabelRepository labelRepository;
-    private final TaskRepository taskRepository;
-    private final LabelMapper labelMapper;
 
-    public List<LabelDTO> getAll() {
-        List<Label> labels = labelRepository.findAll();
-        var result = labels.stream()
-                .map(labelMapper::map)
-                .toList();
-        return result;
+    private final LabelRepository labelRepository;
+    private final LabelMapper labelMapper;
+    private final TaskRepository taskRepository;
+
+
+    public LabelDTO create(LabelCreateDTO labelCreateDTO) {
+        var label = labelMapper.map(labelCreateDTO);
+        labelRepository.save(label);
+        return labelMapper.map(label);
     }
 
-    public LabelDTO create(LabelCreateDTO labelData) {
-        Label label = labelMapper.map(labelData);
-        labelRepository.save(label);
-        var labelDTO = labelMapper.map(label);
-        return labelDTO;
+    public List<LabelDTO> getAll() {
+        var tasks = labelRepository.findAll();
+        return tasks.stream()
+                .map(labelMapper::map)
+                .toList();
     }
 
     public LabelDTO findById(Long id) {
-        var label = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id " + id + " not found!"));
-        var labelDTO = labelMapper.map(label);
-        return labelDTO;
+        var label = labelRepository.findByIdWithEagerUpload(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label With Id: " + id + " Not Found"));
+
+        log.info("Label found in DB {}", id);
+
+        return labelMapper.map(label);
     }
 
-    public LabelDTO update(LabelUpdateDTO labelData, Long id) {
-        var label = labelRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Label with id " + id + " not found!"));
-        labelMapper.update(labelData, label);
+    public LabelDTO update(LabelUpdateDTO labelUpdateDTO, Long id) {
+        var label = labelRepository.findByIdWithEagerUpload(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Label With Id: " + id + " Not Found"));
+
+        labelMapper.update(labelUpdateDTO, label);
+
         labelRepository.save(label);
-        var labelDTO = labelMapper.map(label);
-        return labelDTO;
+        return labelMapper.map(label);
     }
 
     public void delete(Long id) {

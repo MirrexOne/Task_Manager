@@ -16,4 +16,3 @@ public class RsaKeyProperties {
     private RSAPublicKey publicKey;
     private RSAPrivateKey privateKey;
 }
-//компонент для чтения rsa-ключей и доступности их в коде

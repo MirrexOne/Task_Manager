@@ -4,32 +4,30 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.openapitools.jackson.nullable.JsonNullable;
 
-import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
+
 
 @Getter
 @Setter
 public class TaskDTO {
-    private Long id;
-    private JsonNullable<Long> index;
+
+    private long id;
+
+    private Integer index;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate createdAt;
+    private String createdAt;
 
     @JsonProperty("assignee_id")
-    private JsonNullable<Long> assigneeId;
+    private long assigneeId;
 
-    @JsonProperty("title")
-    private JsonNullable<String> name;
+    private String title;
 
-    @JsonProperty("content")
-    private JsonNullable<String> description;
+    private String content;
 
-    @JsonProperty("status")
-    private JsonNullable<String> status;
+    private String status;
 
-    @JsonProperty("taskLabelIds")
-    private JsonNullable<Set<Long>> taskLabelIds;
+    private Set<Long> taskLabelIds = new HashSet<>();
 }
