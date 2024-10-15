@@ -27,9 +27,9 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Optional<User> firstUser = userRepository.findByEmail("hexlet@example.com");
+        Optional<User> firstUser = userRepository.findByEmail("mirrex@dev.io");
         if (firstUser.isEmpty()) {
-            var email = "hexlet@example.com";
+            var email = "mirrex@dev.io";
             var userData = new User();
             userData.setEmail(email);
             userData.setPasswordDigest(passwordEncoder.encode("qwerty"));
