@@ -28,7 +28,7 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         var admin = new UserCreateDTO();
 
-        admin.setEmail("hexlet@example.com");
+        admin.setEmail("mirrex@dev.io");
         admin.setFirstName("Admin");
         admin.setLastName("Admin");
         admin.setPassword("qwerty");
