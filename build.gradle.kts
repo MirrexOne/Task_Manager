@@ -51,27 +51,24 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
 
-    implementation("org.liquibase:liquibase-core")
-
-    implementation("org.mapstruct:mapstruct:1.5.5.Final") //для создания маппера по преобразованию сущности в ДТО
+    implementation("org.mapstruct:mapstruct:1.5.5.Final")
     annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-devtools")
-    implementation("org.springframework.boot:spring-boot-starter-validation") //нужна для разного рода валидаций полей сущностей
-    implementation("org.springframework.boot:spring-boot-starter-security") //Секьюрити/хеш пароля..
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.8.0")//для подключение Sentry для стороннего отлова багов
-
+    implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.8.0")
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.postgresql:postgresql:42.6.0")
     runtimeOnly("com.h2database:h2")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6") //нужна для null-маппера, чтоб работать с  null, как передаваемыми значнеиями
+    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 
-    implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0") //для генерации док-ции по API проекта
-//	implementation ("org.springdoc:springdoc-openapi-ui:2.5.0") //для генерации док-ции по API проекта
+    implementation ("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+//	implementation ("org.springdoc:springdoc-openapi-ui:2.5.0")
 
     testCompileOnly("org.projectlombok:lombok:1.18.30")
     testAnnotationProcessor("org.projectlombok:lombok:1.18.30")
@@ -80,7 +77,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.2.2") //для контроля ответа в формате-json
+    testImplementation("net.javacrumbs.json-unit:json-unit-assertj:3.2.2")
 
     implementation("net.datafaker:datafaker:2.0.1")
     implementation("org.instancio:instancio-junit:3.3.0")
