@@ -1,16 +1,16 @@
 package hexlet.code.model;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,37 +22,34 @@ import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-
 @Entity
+@Setter
+@Getter
 @Table(name = "tasks")
 @EntityListeners(AuditingEntityListener.class)
-@Getter
-@Setter
-@EqualsAndHashCode(of = {"name", "taskStatus"})
 public class Task implements BaseEntity {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    private long id;
+    private Long id;
 
-    @NotBlank
-    @Size(min = 1)
     private String name;
 
     private Integer index;
 
-    @NotBlank
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @ManyToOne
+    private User assignee;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private TaskStatus taskStatus;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private Set<Label> labels = new HashSet<>();
 
     @CreatedDate
     private LocalDate createdAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private TaskStatus taskStatus;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User assignee;
-
-    @ManyToMany
-    private Set<Label> labels = new HashSet<>();
 }

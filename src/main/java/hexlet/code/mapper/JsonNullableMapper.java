@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.openapitools.jackson.nullable.JsonNullable;
 
+
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING
 )
@@ -23,3 +24,5 @@ public abstract class JsonNullableMapper {
         return nullable != null && nullable.isPresent();
     }
 }
+//класс нужен, чтоб при обрабтки ДТО-модель можно было принимать null, как значнеие,
+// и добавлять его в таблы/сущности/дто

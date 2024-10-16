@@ -9,13 +9,10 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-
 @Component
 @AllArgsConstructor
 public class JWTUtils {
-
     private final JwtEncoder encoder;
-
 
     public String generateToken(String username) {
         Instant now = Instant.now();
@@ -28,3 +25,4 @@ public class JWTUtils {
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 }
+//класс создает токен для юзера на основе его username

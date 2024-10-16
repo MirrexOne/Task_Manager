@@ -3,16 +3,18 @@ package hexlet.code.dto.users;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import org.openapitools.jackson.nullable.JsonNullable;
 
+import java.time.LocalDate;
 
-@Getter
 @Setter
+@Getter
 public class UserDTO {
-    private long id;
-    private String email;
-    private String firstName;
-    private String lastName;
+    private Long id;
+    private JsonNullable<String> email;
+    private JsonNullable<String> firstName;
+    private JsonNullable<String> lastName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private String createdAt;
+    private LocalDate createdAt;
 }
