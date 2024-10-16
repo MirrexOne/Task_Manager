@@ -1,4 +1,4 @@
-package hexlet.code.dto.taskStatuses;
+package hexlet.code.dto.taskstatuses;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;

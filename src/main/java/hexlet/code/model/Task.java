@@ -33,14 +33,17 @@ public class Task implements BaseEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "index")
     private Integer index;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne
+    @JoinColumn(name = "assignee_id")
     private User assignee;
 
     @JoinColumn(nullable = false)
@@ -51,5 +54,6 @@ public class Task implements BaseEntity {
     private Set<Label> labels = new HashSet<>();
 
     @CreatedDate
+    @Column(name = "created_at")
     private LocalDate createdAt;
 }

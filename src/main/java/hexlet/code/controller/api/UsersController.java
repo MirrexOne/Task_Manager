@@ -58,7 +58,7 @@ public class UsersController {
 
     @PutMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize(CURRENT_USER)
+    @PreAuthorize("@userUtils.getCurrentUser().getId() == #id")
     public ResponseEntity<UserDTO> update(@RequestBody @Valid UserUpdateDTO userData, @PathVariable Long id) {
         UserDTO user = userService.update(userData, id);
         return ResponseEntity.status(HttpStatus.OK).body(user);
@@ -66,7 +66,7 @@ public class UsersController {
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize(CURRENT_USER)
+    @PreAuthorize("@userUtils.getCurrentUser().getId() == #id")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.delete(id);
         return ResponseEntity.noContent().build();
