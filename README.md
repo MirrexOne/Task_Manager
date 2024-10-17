@@ -58,7 +58,7 @@ Password: qwerty
 - Развертывание в production: **Docker**
 > Примечание: в данный момент из-за того, что приложение задеплоено на бесплатный тариф на хостинге, оно очень медленно открывается в production среде, **локальное использование предпочтительнее** 
 
-![image](https://github.com/DEGTEVUWU/java-project-99/assets/148809450/4b1660f7-a80a-44f8-bb3d-739047af1336)
-![image](https://github.com/DEGTEVUWU/java-project-99/assets/148809450/2774f884-8ca9-41e9-b7cf-c35185435801)
-![image](https://github.com/DEGTEVUWU/java-project-99/assets/148809450/0fee1ca4-bec2-482e-88c1-6e589f92b358)
-![image](https://github.com/DEGTEVUWU/java-project-99/assets/148809450/7d1a10c6-da81-4a95-b7f5-a283bd8db0b8)
+<!---![image]()
+![image]()
+![image]()
+![image]()-->
